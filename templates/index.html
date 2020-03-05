@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <title>發票對獎</title>
+</head>
+<body>
+
+
+	<div class="container-fluid">
+		<ul class="nav nav-tabs justify-content-center">
+				{% for i in link %}
+				<li class="nav-item">
+					<a class="nav-link {{chkRadio[loop.index0]}}" href="?month={{link[loop.index0]}}">{{strMonth[loop.index0]}}</a>
+				</li>
+				{% endfor %}
+		</ul>
+
+		<div class="jumbotron">
+		<h1 class="display-4 text-center text-danger">{{digit}}</h1>
+		<p class="text-center text-danger">
+		{% if digitMin == -1 %}
+			個位數
+		{% elif digitMin == -2 %}
+			十位數
+		{% else %}
+			百位數
+		{% endif %}
+		</p>
+		</div>
+
+		<table class="table table-striped">
+		<thead>
+		<tr>
+			<th>發票號碼</th>
+			<th>獎項</th>
+		</tr>
+		</thead>
+		<tbody>
+		{% for e in bucket %}
+			{% for k, v in e[1].items() %}
+				<tr>
+				<td>
+				{% for j in range(8) %}
+					{% if j - 8 == digitMin %}
+						<span class="h3 text-monospace text-danger">{{k[j]}}</span>
+					{% elif j < 5 or v == "特別獎" or v == "特獎" %}
+						<span class="h3 text-monospace text-muted">{{k[j]}}</span>
+					{% else %}
+						<span class="h3 text-monospace">{{k[j]}}</span>
+					{% endif %}
+				{% endfor %}
+				</td>
+				<td>{{v}}</td>
+				</tr>
+			{% endfor %}
+		{% endfor %}
+		</tbody>
+		</table>
+	</div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+</body>
+</html>
