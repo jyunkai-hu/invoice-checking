@@ -1,13 +1,14 @@
 from flask import Flask, render_template, request
 from bs4 import BeautifulSoup
 import requests
+from cachecontrol import CacheControl
 
-
+sessionCached = CacheControl(requests.session())
 application = Flask(__name__)
 
 @application.route('/', methods=['GET', 'POST'])
 def index():
-    r = requests.get('https://www.etax.nat.gov.tw/etw-main/web/ETW183W1/')
+    r = sessionCached.get('https://www.etax.nat.gov.tw/etw-main/web/ETW183W1/')
     r.encoding = 'utf-8'
     soup = BeautifulSoup(r.text, "html.parser")
     link = soup.find_all("a", {"href" : lambda s : s and s.startswith("/etw-main/web/ETW183W2_")})[:2]
@@ -19,7 +20,7 @@ def index():
 
     chkRadio = [" active" if month == x else "" for x in link]
 
-    r = requests.get('https://www.etax.nat.gov.tw/etw-main/web/ETW183W2_' + month)
+    r = sessionCached.get('https://www.etax.nat.gov.tw/etw-main/web/ETW183W2_' + month)
     r.encoding = 'utf-8'
     soup = BeautifulSoup(r.text, "html.parser")
     prize = {}
