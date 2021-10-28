@@ -8,10 +8,10 @@ application = Flask(__name__)
 
 @application.route('/', methods=['GET', 'POST'])
 def index():
-    r = sessionCached.get('https://www.etax.nat.gov.tw/etw-main/web/ETW183W1/')
+    r = sessionCached.get('https://www.etax.nat.gov.tw/etw-main/ETW183W1/')
     r.encoding = 'utf-8'
     soup = BeautifulSoup(r.text, "html.parser")
-    link = soup.find_all("a", {"href" : lambda s : s and s.startswith("/etw-main/web/ETW183W2_")})[:2]
+    link = soup.find_all("a", {"href" : lambda s : s and s.find("/etw-main/ETW183W2_") != -1})[:2]
     link = [x["href"][-5:] for x in link]
 
     month = request.values.get("month")
@@ -20,15 +20,15 @@ def index():
 
     chkRadio = [" active" if month == x else "" for x in link]
 
-    r = sessionCached.get('https://www.etax.nat.gov.tw/etw-main/web/ETW183W2_' + month)
+    r = sessionCached.get('https://www.etax.nat.gov.tw/etw-main/ETW183W2_' + month)
     r.encoding = 'utf-8'
     soup = BeautifulSoup(r.text, "html.parser")
     prize = {}
-    prize[soup.find(id="specialPrize").parent.td.text.strip()] = "特別獎"
-    prize[soup.find(id="grandPrize").parent.td.text.strip()] = "特獎"
-    for e in soup.find(id="firstPrize").parent.td.text.split():
+    prize[soup.find("th", string="特別獎").parent.td.text.strip()] = "特別獎"
+    prize[soup.find("th", string="特獎").parent.td.text.strip()] = "特獎"
+    for e in soup.find("th", string="頭獎").parent.td.text.split():
         prize[e] = "頭獎"
-    for e in soup.find(id="addSixPrize").parent.td.text.strip().split("、"):
+    for e in soup.find("th", string="增開六獎").parent.td.text.split():
         prize["xxxxx" + e] = "增開六獎"
 
     prize = sorted(prize.items(), key=lambda x : x[0])
